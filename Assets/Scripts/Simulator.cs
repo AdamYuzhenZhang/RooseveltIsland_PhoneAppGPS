@@ -18,7 +18,7 @@ public class Simulator : MonoBehaviour
     private float thisDistanceRatio;
     private float lastDistanceRatio;
 
-    private float[] speeds = new float[13] {0.015f, 0.05f, 0.011f, 0.10f, 0.10f, 0.015f, 0.006f, 0.018f, 0.018f, 0.006f, 0.015f, 0.10f, 0.5f};
+    private float[] speeds = new float[13] {0.015f, 0.05f, 0.011f, 0.10f, 0.10f, 0.008f, 0.006f, 0.018f, 0.018f, 0.006f, 0.015f, 0.10f, 0.5f};
     
     // Start is called before the first frame update
     void Start()

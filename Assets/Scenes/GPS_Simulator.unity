@@ -1036,16 +1036,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1e3dc9b9ae0af74790f88e5b28e4b5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  brokerAddress: test.mosquitto.org
-  brokerPort: 1883
-  isEncrypted: 0
+  brokerAddress: farlab.infosci.cornell.edu
+  brokerPort: 8883
+  isEncrypted: 1
   connectionDelay: 500
   timeoutOnConnection: 30000
   autoConnect: 1
-  mqttUserName: 
-  mqttPassword: 
-  topicSubscribe: M2MQTT_Unity/RI_XR
-  topicPublish: M2MQTT_Unity/RI_XR
+  mqttUserName: idd
+  mqttPassword: device@theFarm
+  topicSubscribe: IDD/RI_XR
+  topicPublish: IDD/RI_XR
   messagePublish: lol lol
   autoTest: 0
 --- !u!114 &631445137

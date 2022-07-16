@@ -42,6 +42,8 @@ public class Controller : MonoBehaviour
     private float[] speeds = new float[13] {0.02f, 0.06f, 0.013f, 0.12f, 0.12f, 0.02f, 0.008f, 0.022f, 0.022f, 0.008f, 0.02f, 0.12f, 0.6f};
 
     private bool isMoving;
+
+    private int m_currentMessageValue = 0;
     
     private void Start()
     {
@@ -60,7 +62,7 @@ public class Controller : MonoBehaviour
     {
         getGPSInfo();
         // turn gps into message
-        gpsToMessage(0);
+        gpsToMessage();
         publishToMQTT();
 
         if (isMoving)
@@ -76,7 +78,7 @@ public class Controller : MonoBehaviour
     }
     
     // turn gps into message
-    private void gpsToMessage(int command)
+    private void gpsToMessage()
     {
         // turn gps location into virtual world location
         Vector3 worldLocation = deltaGPStoWorldCoord(deltaGPS());
@@ -98,19 +100,27 @@ public class Controller : MonoBehaviour
         
         // To String
         //messageOut = currentPt + " " + simulatedRatio + " " + deltaRatio + " " + deltaTime;
-        switch (command)
+        switch (m_currentMessageValue)
         {
             case 0:
+                // normal
                 messageOut = currentPt + " " + weightedRatio + " " + deltaRatio + " " + deltaTime;
                 break;
             case -1:
+                // reset
                 messageOut = currentPt + " " + weightedRatio + " -10 -10";
                 break;
             case 1:
+                // firefighter start
                 messageOut = currentPt + " " + weightedRatio + " -5 -5";
                 break;
             case 2:
+                // firefighter end
                 messageOut = currentPt + " " + weightedRatio + " -6 -6";
+                break;
+            case 3:
+                // start video
+                messageOut = currentPt + " " + weightedRatio + " -50 -50";
                 break;
         }
         // debug message
@@ -143,15 +153,23 @@ public class Controller : MonoBehaviour
     }
     public void resetHeadsets()
     {
-        gpsToMessage(-1);
+        m_currentMessageValue = -1;
+        gpsToMessage();
     }
     public void FirefighterStart()
     {
-        gpsToMessage(1);
+        m_currentMessageValue = 1;
+        gpsToMessage();
     }
     public void FirefighterEnd()
     {
-        gpsToMessage(2);
+        m_currentMessageValue = 2;
+        gpsToMessage();
+    }
+    public void StartVideo()
+    {
+        m_currentMessageValue = 3;
+        gpsToMessage();
     }
 
     // For finite lines:
@@ -212,5 +230,6 @@ public class Controller : MonoBehaviour
     {
         mqttConnector.messagePublish = messageOut;
         mqttConnector.Publish();
+        m_currentMessageValue = 0;
     }
 }
