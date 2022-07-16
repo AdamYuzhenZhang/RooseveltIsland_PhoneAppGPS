@@ -18,12 +18,20 @@ public class Simulator : MonoBehaviour
     private float thisDistanceRatio;
     private float lastDistanceRatio;
 
-    private float[] speeds = new float[13] {0.015f, 0.05f, 0.011f, 0.10f, 0.10f, 0.008f, 0.006f, 0.018f, 0.018f, 0.006f, 0.015f, 0.10f, 0.5f};
+    private float[] speeds = new float[13] {0.015f, 0.05f, 0.011f, 0.10f, 0.10f, 0.003f, 0.006f, 0.018f, 0.018f, 0.006f, 0.015f, 0.10f, 0.5f};
+    private float[] speedsFast = new float[13] {0.03f, 0.08f, 0.02f, 0.2f, 0.2f, 0.006f, 0.01f, 0.018f, 0.018f, 0.006f, 0.015f, 0.10f, 0.5f};
+
+    public bool faster;
+    private int m_currentMessageValue = 0;
     
     // Start is called before the first frame update
     void Start()
     {
         InvokeRepeating("updateInformation", 5f, 1f);
+        if (faster)
+        {
+            speeds = speedsFast;
+        }
     }
 
     void updateInformation()
@@ -42,6 +50,29 @@ public class Simulator : MonoBehaviour
     private void simulateMessage()
     {
         messageOut = currentPt + " " + Mathf.Clamp(thisDistanceRatio, 0, 1) + " " + -1 + " " + -1;
+        switch (m_currentMessageValue)
+        {
+            case 0:
+                // normal
+                messageOut = currentPt + " " + Mathf.Clamp(thisDistanceRatio, 0, 1) + " " + -1 + " " + -1;
+                break;
+            case -1:
+                // reset
+                messageOut = currentPt + " " + Mathf.Clamp(thisDistanceRatio, 0, 1) + " -10 -10";
+                break;
+            case 1:
+                // firefighter start
+                messageOut = currentPt + " " + Mathf.Clamp(thisDistanceRatio, 0, 1) + " -5 -5";
+                break;
+            case 2:
+                // firefighter end
+                messageOut = currentPt + " " + Mathf.Clamp(thisDistanceRatio, 0, 1) + " -6 -6";
+                break;
+            case 3:
+                // start video
+                messageOut = currentPt + " " + Mathf.Clamp(thisDistanceRatio, 0, 1) + " -50 -50";
+                break;
+        }
     }
     
     public void nextPoint()
@@ -62,11 +93,31 @@ public class Simulator : MonoBehaviour
         }
         
     }
-    
+    public void resetHeadsets()
+    {
+        m_currentMessageValue = -1;
+        simulateMessage();
+    }
+    public void FirefighterStart()
+    {
+        m_currentMessageValue = 1;
+        simulateMessage();
+    }
+    public void FirefighterEnd()
+    {
+        m_currentMessageValue = 2;
+        simulateMessage();
+    }
+    public void StartVideo()
+    {
+        m_currentMessageValue = 3;
+        simulateMessage();
+    }
     private void publishToMQTT()
     {
         mqttConnector.messagePublish = messageOut;
         mqttConnector.Publish();
+        m_currentMessageValue = 0;
     }
     
     public void restartSession()
