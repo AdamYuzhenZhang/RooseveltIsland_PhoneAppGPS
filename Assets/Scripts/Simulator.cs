@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -24,13 +25,37 @@ public class Simulator : MonoBehaviour
     public bool faster;
     private int m_currentMessageValue = 0;
     
+    [SerializeField] 
+    private float deltaTime;
+
+    [SerializeField] 
+    private float sleepTime;
+
+    [SerializeField] 
+    private bool _shouldFast; // whether the bus should accelerate at the later part
+
+    private bool isWake = false;
+    
     // Start is called before the first frame update
     void Start()
     {
-        InvokeRepeating("updateInformation", 5f, 1f);
-        if (faster)
+        // whether the bus should accelerate at the later part, control by user
+        if (_shouldFast)
         {
-            speeds = speedsFast;
+            if (faster)
+            {
+                speeds = speedsFast;
+            }
+        }
+        StartCoroutine(WaitforSecs());
+        Time.fixedDeltaTime = deltaTime;
+    }
+
+    private void FixedUpdate()
+    {
+        if (isWake)
+        {
+            updateInformation();
         }
     }
 
@@ -123,5 +148,11 @@ public class Simulator : MonoBehaviour
     public void restartSession()
     {
         SceneManager.LoadScene("GPS_Simulator");
+    }
+    
+    IEnumerator WaitforSecs()
+    {
+        yield return new WaitForSeconds(sleepTime);
+        isWake = true;
     }
 }

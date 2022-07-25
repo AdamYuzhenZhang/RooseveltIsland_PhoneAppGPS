@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657815, g: 0.49641192, b: 0.57481617, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1434,6 +1434,8 @@ MonoBehaviour:
   messageOutText: {fileID: 1270101156}
   pointMat: {fileID: 2100000, guid: a4c967854852a4e4181566103896649e, type: 2}
   pointMat_Activate: {fileID: 2100000, guid: 7ea915d69de65a14a933b55d7dde8f1f, type: 2}
+  deltaTime: 0
+  sleepTime: 0
 --- !u!4 &631445135
 Transform:
   m_ObjectHideFlags: 0
@@ -1504,6 +1506,9 @@ MonoBehaviour:
   pointMat: {fileID: 2100000, guid: a4c967854852a4e4181566103896649e, type: 2}
   pointMat_Activate: {fileID: 2100000, guid: 7ea915d69de65a14a933b55d7dde8f1f, type: 2}
   faster: 1
+  deltaTime: 1
+  sleepTime: 5
+  _shouldFast: 1
 --- !u!1 &699475495
 GameObject:
   m_ObjectHideFlags: 0

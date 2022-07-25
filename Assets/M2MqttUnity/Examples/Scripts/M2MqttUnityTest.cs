@@ -211,6 +211,7 @@ namespace M2MqttUnity.Examples
                 {
                     autoTest = false;
                     Disconnect();
+                    Debug.Log(1);
                 }
             }
         }

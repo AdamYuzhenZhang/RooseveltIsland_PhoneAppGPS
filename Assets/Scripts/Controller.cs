@@ -44,18 +44,28 @@ public class Controller : MonoBehaviour
     private bool isMoving;
 
     private int m_currentMessageValue = 0;
+
+    [SerializeField] 
+    private float deltaTime;
+
+    [SerializeField] 
+    private float sleepTime;
+
+    private bool isWake = false;
     
     private void Start()
     {
+        Time.fixedDeltaTime = deltaTime;
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
-        InvokeRepeating("updateInformation", 5f, 1f);
+        StartCoroutine(WaitforSecs());
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
-        //Debug.Log("pathLength");
-        //Debug.Log(dollyTrack.PathLength);
-        //Debug.Log(dollyTrack.ToNativePathUnits(500, CinemachinePathBase.PositionUnits.Distance));
+        if (isWake)
+        {
+            updateInformation();
+        }
     }
 
     void updateInformation()
@@ -231,5 +241,11 @@ public class Controller : MonoBehaviour
         mqttConnector.messagePublish = messageOut;
         mqttConnector.Publish();
         m_currentMessageValue = 0;
+    }
+
+    IEnumerator WaitforSecs()
+    {
+        yield return new WaitForSeconds(sleepTime);
+        isWake = true;
     }
 }
