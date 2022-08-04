@@ -23,6 +23,7 @@ public class Simulator : MonoBehaviour
     private float[] speedsFast = new float[13] {0.03f, 0.08f, 0.02f, 0.2f, 0.2f, 0.006f, 0.01f, 0.018f, 0.018f, 0.006f, 0.015f, 0.10f, 0.5f};
 
     public bool faster;
+    public bool shouldslow;
     private int m_currentMessageValue = 0;
     
     [SerializeField] 
@@ -35,10 +36,22 @@ public class Simulator : MonoBehaviour
     private bool _shouldFast; // whether the bus should accelerate at the later part
 
     private bool isWake = false;
+    private bool isStart = false;
     
     // Start is called before the first frame update
     void Start()
     {
+        for (int i =0; i<speeds.Length;i++)
+        {
+            speeds[i] = speeds[i] * 1.1f;
+        }
+        if (shouldslow)
+        {
+            for (int i =0; i<speeds.Length;i++)
+            {
+                speeds[i] = speeds[i] * 0.75f;
+            }
+        }
         // whether the bus should accelerate at the later part, control by user
         if (_shouldFast)
         {
@@ -55,7 +68,10 @@ public class Simulator : MonoBehaviour
     {
         if (isWake)
         {
-            updateInformation();
+            if (isStart)
+            {
+                updateInformation();
+            }
         }
     }
 
@@ -97,6 +113,14 @@ public class Simulator : MonoBehaviour
                 // start video
                 messageOut = currentPt + " " + Mathf.Clamp(thisDistanceRatio, 0, 1) + " -50 -50";
                 break;
+            case 4:
+                // black out video
+                messageOut = currentPt + " " + Mathf.Clamp(thisDistanceRatio, 0, 1) + " -7 -7";
+                break;
+            case 5:
+                // unblock the video
+                messageOut = currentPt + " " + Mathf.Clamp(thisDistanceRatio, 0, 1) + " -8 -8";
+                break;
         }
     }
     
@@ -135,7 +159,24 @@ public class Simulator : MonoBehaviour
     }
     public void StartVideo()
     {
+        // Will not activate until press start video
+        mqttConnector.Connect();
+        isStart = true;
         m_currentMessageValue = 3;
+        simulateMessage();
+    }
+
+    // method to make the screen black.
+    public void BlackOut()
+    {
+        m_currentMessageValue = 4;
+        simulateMessage();
+    }
+    
+    // method to resume from black scree
+    public void ResumeBlackout()
+    {
+        m_currentMessageValue = 5;
         simulateMessage();
     }
     private void publishToMQTT()
