@@ -37,6 +37,7 @@ public class Simulator : MonoBehaviour
 
     private bool isWake = false;
     private bool isStart = false;
+    private bool atFirefighter;
     
     // Start is called before the first frame update
     void Start()
@@ -79,13 +80,18 @@ public class Simulator : MonoBehaviour
     {
         //getGPSInfo();
         // turn gps into message
-        simulateMessage();
-        publishToMQTT();
-        thisDistanceRatio += speeds[currentPt];
-        if (thisDistanceRatio >= 1)
+        if (!atFirefighter)
         {
-            nextPoint();
+            simulateMessage();
+            publishToMQTT();
+            
+            thisDistanceRatio += speeds[currentPt];
+            if (thisDistanceRatio >= 1)
+            {
+                nextPoint();
+            }
         }
+        
     }
 
     private void simulateMessage()
@@ -151,9 +157,12 @@ public class Simulator : MonoBehaviour
     {
         m_currentMessageValue = 1;
         simulateMessage();
+        publishToMQTT();
+        atFirefighter = true;
     }
     public void FirefighterEnd()
     {
+        atFirefighter = false;
         m_currentMessageValue = 2;
         simulateMessage();
     }
