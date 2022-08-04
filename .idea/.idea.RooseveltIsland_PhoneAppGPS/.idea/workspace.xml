@@ -4,8 +4,8 @@
     <list default="true" id="fef344d2-74b1-4183-93c1-0f44ff78344e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.RooseveltIsland_PhoneAppGPS/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RooseveltIsland_PhoneAppGPS/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scenes/GPS.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/GPS.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/GPS_Simulator.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/GPS_Simulator.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Simulator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Simulator.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Controller.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Controller.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectSettings/ProjectVersion.txt" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/ProjectVersion.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -62,7 +62,7 @@
       <workItem from="1658267658325" duration="592000" />
       <workItem from="1658778523732" duration="3748000" />
       <workItem from="1659394261341" duration="1934000" />
-      <workItem from="1659550012764" duration="2567000" />
+      <workItem from="1659550012764" duration="4672000" />
     </task>
     <servers />
   </component>

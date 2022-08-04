@@ -9,6 +9,8 @@ using UnityEngine.SceneManagement;
 
 public class Controller : MonoBehaviour
 {
+    
+    private bool isStart = false;
     public GPS_MQTT mqttConnector;
     public LocationService gpsLocation;
 
@@ -64,7 +66,10 @@ public class Controller : MonoBehaviour
     {
         if (isWake)
         {
-            updateInformation();
+            if (isStart)
+            {
+                updateInformation();
+            }
         }
     }
 
@@ -132,6 +137,14 @@ public class Controller : MonoBehaviour
                 // start video
                 messageOut = currentPt + " " + weightedRatio + " -50 -50";
                 break;
+            case 4:
+                // black out video
+                messageOut = currentPt + " " + weightedRatio + " -7 -7";
+                break;
+            case 5:
+                // unblock the video
+                messageOut = currentPt + " " + weightedRatio + " -8 -8";
+                break;
         }
         // debug message
         messageOutText.text = messageOut;
@@ -157,6 +170,19 @@ public class Controller : MonoBehaviour
         
     }
 
+    // new button function (Blackout/ Resume blackout)
+    public void BlackOut()
+    {
+        m_currentMessageValue = 4;
+        gpsToMessage();
+    }
+    
+    // method to resume from black scree
+    public void ResumeBlackout()
+    {
+        m_currentMessageValue = 5;
+        gpsToMessage();
+    }
     public void restartSession()
     {
         SceneManager.LoadScene("GPS");
@@ -178,6 +204,8 @@ public class Controller : MonoBehaviour
     }
     public void StartVideo()
     {
+        mqttConnector.Connect();
+        isStart = true;
         m_currentMessageValue = 3;
         gpsToMessage();
     }
