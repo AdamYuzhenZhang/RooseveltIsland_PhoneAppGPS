@@ -95,6 +95,20 @@ public class Controller : MonoBehaviour
         SpeedText.text = "RatioSpeed: " + ManualSpeed;
     }
 
+    private float lastManualSpeed;
+    public void Stop()
+    {
+        lastManualSpeed = ManualSpeed;
+        ManualSpeed = 0f;
+        SpeedText.text = "RatioSpeed: " + ManualSpeed;
+    }
+    
+    public void Resume()
+    {
+        ManualSpeed = lastManualSpeed;
+        SpeedText.text = "RatioSpeed: " + ManualSpeed;
+    }
+
     private void FixedUpdate()
     {
         if (isWake)
