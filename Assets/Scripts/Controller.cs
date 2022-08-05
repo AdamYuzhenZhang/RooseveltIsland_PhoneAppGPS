@@ -31,6 +31,11 @@ public class Controller : MonoBehaviour
     public GameObject playerPosition;
     public GameObject simulatroPosition;
 
+    private bool IsManualMode;
+    public Text ModeText;
+    public Text SpeedText;
+    private float ManualSpeed = 0.01f;
+
     private float thisDistanceRatio;
     private float lastDistanceRatio;
     private float simulatedRatio;
@@ -47,6 +52,8 @@ public class Controller : MonoBehaviour
 
     private int m_currentMessageValue = 0;
 
+    private float endingRatio;
+
     [SerializeField] 
     private float deltaTime;
 
@@ -60,6 +67,32 @@ public class Controller : MonoBehaviour
         Time.fixedDeltaTime = deltaTime;
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
         StartCoroutine(WaitforSecs());
+        GoAutoGPS();
+        SpeedText.text = "RatioSpeed: " + ManualSpeed;
+    }
+
+    public void GoManual()
+    {
+        IsManualMode = true;
+        ModeText.text = "Manual Mode";
+    }
+
+    public void GoAutoGPS()
+    {
+        IsManualMode = false;
+        ModeText.text = "Auto GPS Mode";
+    }
+
+    public void SpeedUp()
+    {
+        ManualSpeed *= 1.25f;
+        SpeedText.text = "RatioSpeed: " + ManualSpeed;
+    }
+
+    public void SpeedDown()
+    {
+        ManualSpeed *= 0.8f;
+        SpeedText.text = "RatioSpeed: " + ManualSpeed;
     }
 
     private void FixedUpdate()
@@ -75,16 +108,26 @@ public class Controller : MonoBehaviour
 
     void updateInformation()
     {
-        getGPSInfo();
-        // turn gps into message
-        gpsToMessage();
-        publishToMQTT();
-
-        if (isMoving)
+        if (!IsManualMode)
         {
-            simulatedRatio += speeds[currentPt];
-            setSimulatorPosition();
+            // AUTO GPS Mode
+            getGPSInfo();
+            // turn gps into message
+            gpsToMessage();
+            publishToMQTT();
         }
+        else
+        {
+            // Manual Mode
+            simulatedRatio += ManualSpeed;
+            if (simulatedRatio > 1f)
+            {
+                nextPoint();
+            }
+            GetMessageOut(simulatedRatio);
+            publishToMQTT();
+        }
+        setSimulatorPosition();
     }
 
     public void toggleIsMoving()
@@ -106,20 +149,24 @@ public class Controller : MonoBehaviour
         float deltaTime = deltaTimeStamp();
 
         float weightedRatio = thisDistanceRatio;
+        simulatedRatio = thisDistanceRatio;
         
         // automatic adding
         if (weightedRatio > 0.97)
         {
             nextPoint();
         }
-        
-        // To String
-        //messageOut = currentPt + " " + simulatedRatio + " " + deltaRatio + " " + deltaTime;
+
+        GetMessageOut(weightedRatio);
+    }
+
+    private void GetMessageOut(float weightedRatio)
+    {
         switch (m_currentMessageValue)
         {
             case 0:
                 // normal
-                messageOut = currentPt + " " + weightedRatio + " " + deltaRatio + " " + deltaTime;
+                messageOut = currentPt + " " + weightedRatio + " " + timeStamp + " " + deltaTime;
                 break;
             case -1:
                 // reset
@@ -146,13 +193,11 @@ public class Controller : MonoBehaviour
                 messageOut = currentPt + " " + weightedRatio + " -8 -8";
                 break;
         }
-        // debug message
-        messageOutText.text = messageOut;
     }
 
     public void nextPoint()
     {
-        if (currentPt < wayPoints.Length - 2)
+        if (currentPt < wayPoints.Length - 1)
         {
             currentPt += 1;
             foreach (GameObject pt in wayPoints)
@@ -266,6 +311,8 @@ public class Controller : MonoBehaviour
 
     private void publishToMQTT()
     {
+        // debug message
+        messageOutText.text = messageOut;
         mqttConnector.messagePublish = messageOut;
         mqttConnector.Publish();
         m_currentMessageValue = 0;
